@@ -2,10 +2,12 @@ import 'package:custom_questionnaire/model/question.dart';
 
 class FormModel{
   String QuestionnaireID;
-  String NumberOfQuestions;
+  int NumberOfQuestions;
   String QuestionnairePosition;
-  List<QuestionModel> QuestionsArray;
+  List<dynamic> QuestionsArray;
   String UpdatedTimeStamp;
+
+
 
   FormModel(this.QuestionnaireID, this.NumberOfQuestions, this.QuestionnairePosition,
       this.QuestionsArray, this.UpdatedTimeStamp);

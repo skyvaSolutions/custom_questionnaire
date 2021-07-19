@@ -1,4 +1,6 @@
+import 'package:custom_questionnaire/api_calls/get_form_questions.dart';
 import 'package:custom_questionnaire/screens/form_questions.dart';
+import 'package:custom_questionnaire/utils/conversions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -7,15 +9,21 @@ import '../main.dart';
 
 class FormTile extends StatefulWidget {
   final String name;
+  final String? date;
+  final int? noOfQuestions;
   final Function()? onTap;
-  const FormTile({Key? key , required this.name , this.onTap}) : super(key: key);
+  final String? questionnairePosition;
+  const FormTile({Key? key, required this.name, this.onTap ,  this.date ,  this.noOfQuestions ,  this.questionnairePosition}) : super(key: key);
 
   @override
   _FormTileState createState() => _FormTileState();
 }
 
-void edit(BuildContext context , String title){
-  Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=> QuestionsList(title: title)));
+void edit(BuildContext context, String title) {
+  Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (BuildContext context) => QuestionsList(title: title)));
 }
 
 class _FormTileState extends State<FormTile> {
@@ -28,20 +36,39 @@ class _FormTileState extends State<FormTile> {
           actionExtentRatio: 0.25,
           child: ListTile(
             title: Text(
-                widget.name,
-              style: TextStyle(
-                fontSize: 17.0,
+              widget.name,
+              style: const TextStyle(
+                fontSize: 18.0,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            subtitle: const Text('Last Updated on : dd/mm/yyyy'),
-            trailing:  CircleAvatar(
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(
+                  height: 5.0,
+                ),
+                if(widget.date != "")
+                Text(
+                  'Last Updated on - ${widget.date}',
+                ),
+                const SizedBox(
+                  height: 5.0,
+                ),
+                if(widget.questionnairePosition != "")
+                Text(
+                  'Position - ${widget.questionnairePosition}'
+                )
+              ],
+            ),
+            trailing: CircleAvatar(
               radius: 15,
               backgroundColor: teal,
-              child: const Text('5'),
+              child: widget.noOfQuestions != null ?Text('${widget.noOfQuestions}') : const Text('0'),
               foregroundColor: Colors.white,
             ),
-            onTap: (){
+            onTap: () {
               edit(context, widget.name);
             },
           ),
@@ -74,11 +101,16 @@ class _FormTileState extends State<FormTile> {
         Container(
           decoration: BoxDecoration(
             border: Border(
-              bottom: BorderSide(color: teal,width: 1.0),
+              bottom: BorderSide(color: teal, width: 1.0),
             ),
           ),
         ),
       ],
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 }

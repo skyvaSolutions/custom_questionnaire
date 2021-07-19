@@ -1,3 +1,5 @@
+import 'package:custom_questionnaire/api_calls/get_form_questions.dart';
+import 'package:custom_questionnaire/model/question.dart';
 import 'package:custom_questionnaire/screens/add_new_question.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -12,13 +14,7 @@ class ReorderableQuestionList extends StatefulWidget {
       _ReorderableQuestionListState();
 }
 
-List<String> _list = [
-  "Question 1",
-  "Question 2",
-  "Question 3",
-  "Question 4",
-  "Question 5"
-];
+List<QuestionModel> _list = getFormQuestions.questionnaire;
 
 class _ReorderableQuestionListState extends State<ReorderableQuestionList> {
   @override
@@ -27,33 +23,38 @@ class _ReorderableQuestionListState extends State<ReorderableQuestionList> {
       children: _list
           .map(
             (item) => ListTile(
-                key: Key(item),
+                key: Key(item.QuestionID),
                 leading: Icon(Icons.reorder , color: teal,),
-                title: Text("$item" ,
+                title: Text("${item.Question}" ,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                 ),),
+                isThreeLine: true,
                 subtitle: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text('Type A'),
-                    SizedBox(
+                    Text("${item.QuestionType}"),
+                    const SizedBox(
                       width: 5.0,
                     ),
                     Icon(
                       Icons.circle,
+                      color: teal,
                       size: 7.0,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 5.0,
                     ),
-                    Text('5 valid answers'),
+                    Text("${item.validAnswers.length} valid answers"),
+                    const SizedBox(
+                      width: 5.0,
+                    ),
 
                   ],
                 ),
                 trailing: IconButton(
                   onPressed: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext) => AddQuestion()));
+                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext) => const AddQuestion()));
                   },
                   icon: Icon(
                     Icons.edit,
@@ -66,7 +67,7 @@ class _ReorderableQuestionListState extends State<ReorderableQuestionList> {
         // dragging from top to bottom
         if (start < current) {
           int end = current - 1;
-          String startItem = _list[start];
+          QuestionModel startItem = _list[start];
           int i = 0;
           int local = start;
           do {
@@ -77,7 +78,7 @@ class _ReorderableQuestionListState extends State<ReorderableQuestionList> {
         }
         // dragging from bottom to top
         else if (start > current) {
-          String startItem = _list[start];
+          QuestionModel startItem = _list[start];
           for (int i = start; i > current; i--) {
             _list[i] = _list[i - 1];
           }

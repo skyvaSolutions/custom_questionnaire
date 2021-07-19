@@ -1,3 +1,4 @@
+import 'package:custom_questionnaire/api_calls/get_form_questions.dart';
 import 'package:custom_questionnaire/screens/add_new_question.dart';
 import 'package:custom_questionnaire/widgets/reordable_qlist.dart';
 import 'package:flutter/cupertino.dart';
@@ -13,6 +14,9 @@ class QuestionsList extends StatefulWidget {
   _QuestionsListState createState() => _QuestionsListState();
 }
 
+Future getQuestions(String id) async {
+  await getFormQuestions.findQuestions(id);
+}
 
 class _QuestionsListState extends State<QuestionsList> {
   @override
@@ -20,7 +24,7 @@ class _QuestionsListState extends State<QuestionsList> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          onPressed: (){
+          onPressed: () {
             Navigator.pop(context);
           },
           icon: const Icon(
@@ -36,27 +40,47 @@ class _QuestionsListState extends State<QuestionsList> {
           ),
         ),
       ),
-      body: Column(
-        children: [
-          Container(
-            height: MediaQuery.of(context).size.height*0.6,
-            child: const ReorderableQuestionList(),
-          ),
-          const Spacer(),
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                FloatingActionButton(onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (BuildContext) => AddQuestion()));
-                } ,
-                  child: const Icon(Icons.add , color: Colors.white,) , backgroundColor: teal,),
-              ],
-            ),
-          ),
-        ],
+      body: QuestionWidget(widget.title),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (BuildContext) => AddQuestion()));
+        },
+        child: const Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
+        backgroundColor: teal,
       ),
     );
   }
+}
+
+Widget QuestionWidget(String id) {
+  return FutureBuilder(
+      future: getQuestions(id),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.none &&
+            snapshot.hasData == null) {
+          print('null');
+          return Container();
+        } else if (snapshot.connectionState == ConnectionState.waiting) {
+          print('loading');
+          return Center(
+            child: CircularProgressIndicator(
+              color: teal,
+            ),
+          );
+        } else if (snapshot.hasError) {
+          print(snapshot.error);
+          return Container();
+        } else if (snapshot.connectionState == ConnectionState.done) {
+          return const ReorderableQuestionList();
+        } else {
+          print('else');
+          return Container();
+        }
+      });
 }

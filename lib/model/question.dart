@@ -1,5 +1,5 @@
 class QuestionModel{
-  List<String> validAnswers;
+  List<dynamic> validAnswers;
   String _id;
   String Question;
   int QuestionNumber;
