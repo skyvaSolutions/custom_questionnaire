@@ -1,4 +1,5 @@
 import 'package:custom_questionnaire/api_calls/get_form_questions.dart';
+import 'package:custom_questionnaire/model/question.dart';
 import 'package:custom_questionnaire/screens/add_new_question.dart';
 import 'package:custom_questionnaire/widgets/reordable_qlist.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,17 +9,29 @@ import '../main.dart';
 
 class QuestionsList extends StatefulWidget {
   final String title;
-  const QuestionsList({Key? key, required this.title}) : super(key: key);
+  final String? formPosition;
+  const QuestionsList({Key? key, required this.title , this.formPosition}) : super(key: key);
 
   @override
   _QuestionsListState createState() => _QuestionsListState();
 }
 
+List<QuestionModel> formQues = [];
+
 Future getQuestions(String id) async {
-  await getFormQuestions.findQuestions(id);
+  formQues = await getFormQuestions.findQuestions(id);
 }
 
+
+
 class _QuestionsListState extends State<QuestionsList> {
+
+  refresh(){
+    setState(() {
+
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,13 +53,13 @@ class _QuestionsListState extends State<QuestionsList> {
           ),
         ),
       ),
-      body: QuestionWidget(widget.title),
+      body: QuestionWidget(widget.title , refresh , widget.formPosition),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (BuildContext) => AddQuestion()));
+                  builder: (BuildContext) => AddQuestion(formName: widget.title, refresh : refresh , list: formQues,)));
         },
         child: const Icon(
           Icons.add,
@@ -58,7 +71,7 @@ class _QuestionsListState extends State<QuestionsList> {
   }
 }
 
-Widget QuestionWidget(String id) {
+Widget QuestionWidget(String id , Function() refresh , String? formPosition) {
   return FutureBuilder(
       future: getQuestions(id),
       builder: (context, snapshot) {
@@ -73,11 +86,13 @@ Widget QuestionWidget(String id) {
               color: teal,
             ),
           );
-        } else if (snapshot.hasError) {
+        }
+        else if (snapshot.hasError) {
           print(snapshot.error);
           return Container();
-        } else if (snapshot.connectionState == ConnectionState.done) {
-          return const ReorderableQuestionList();
+        }
+        else if (snapshot.connectionState == ConnectionState.done) {
+          return ReorderableQuestionList(formName: id , refresh : refresh , formPosition: formPosition, list: formQues ,);
         } else {
           print('else');
           return Container();

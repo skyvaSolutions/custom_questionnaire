@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'get_form_questions.dart';
 
 
-GetQuestionnaire getQuestionnaire = new GetQuestionnaire();
+GetQuestionnaire getQuestionnaire = GetQuestionnaire();
 
 class GetQuestionnaire{
   List<dynamic> forms = [] ;
@@ -17,6 +17,9 @@ class GetQuestionnaire{
 
 
   Future<void> findForms() async {
+    formUpdateDate =[];
+    formNoQuestions = [];
+    formPosition = [];
     forms = [];
     formListLength = 0;
       print("getQMetaData api called");
@@ -28,12 +31,17 @@ class GetQuestionnaire{
         print(qMetaData);
         formListLength = qMetaData['AppointmentTypes'][0]['QuestionnaireIDArray'].length;
         forms = qMetaData['AppointmentTypes'][0]['QuestionnaireIDArray'];
+        print(forms.length);
         for(var form in forms){
           await getFormQuestions.findQuestions(form);
           formUpdateDate.add(getFormQuestions.date);
           formNoQuestions.add(getFormQuestions.noOfQuestions);
           formPosition.add(getFormQuestions.position);
         }
+        print(forms);
+        print(formPosition);
+        print(formNoQuestions);
+        print(formUpdateDate);
       }
       else{
         print('getQMetaData : Error');

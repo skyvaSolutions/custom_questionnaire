@@ -16,11 +16,11 @@ class GetFormQuestions{
 
 
 
-  Future<void> findQuestions(String id) async {
+  Future<List<QuestionModel>> findQuestions(String id) async {
     questionnaire = [];
     qListLength = 0;
     if(deviceID.deviceId != ""){
-      print("getFormQuestionnaire api called");
+      print("$id getFormQuestionnaire api called");
       String url = "https://shoeboxtx.veloxe.com:36251/api/getFormQuestionnaire?UserToken=95A5B76C-9B05-4992-A44D-DEA8E7AE094C644791499&QuestionnaireID=$id";
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
@@ -28,13 +28,18 @@ class GetFormQuestions{
         List<dynamic> myFormList = json.decode(response.body);
         print(myFormList);
         if(myFormList.isEmpty){
-         print('empty');
+           print('empty');
+           date = "";
+           qListLength = 0;
+           noOfQuestions = 0;
+           position = "";
         }
         else{
-          var formModel = FormModel.fromJson(myFormList[0]);
-          print(formModel.UpdatedTimeStamp);
-          if(formModel.UpdatedTimeStamp != "") {
-            date = formModel.UpdatedTimeStamp;
+          print("form list : $myFormList[0]");
+          var formModel = myFormList[0];
+          print(formModel);
+          if(myFormList[0]['UpdatedTimeStamp'] != "") {
+            date = myFormList[0]['UpdatedTimeStamp'];
           }
           print(myFormList[0]['QuestionsArray']);
           if(myFormList[0]['QuestionsArray'] == null){
@@ -43,11 +48,11 @@ class GetFormQuestions{
           else {
             qListLength = myFormList[0]['QuestionsArray'].length;
           }
+          print('hii');
           print(qListLength);
           noOfQuestions = qListLength;
-          print(formModel.QuestionnairePosition);
-          if(formModel.QuestionnairePosition != "") {
-            position = formModel.QuestionnairePosition;
+          if(formModel['QuestionnairePosition'] != "" && formModel['QuestionnairePosition'] != null ) {
+            position = formModel['QuestionnairePosition'];
           }
           for(int i =0;i<qListLength ;i++){
             questionnaire.add(QuestionModel.fromJson(myFormList[0]['QuestionsArray'][i]));
@@ -62,7 +67,7 @@ class GetFormQuestions{
     else{
       print('device Id null');
     }
-
+    return questionnaire;
 
   }
 
