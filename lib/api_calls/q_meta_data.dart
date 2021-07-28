@@ -14,8 +14,6 @@ class GetQuestionnaire{
   List<String> formPosition = [];
 
 
-
-
   Future<void> findForms() async {
     formUpdateDate =[];
     formNoQuestions = [];
@@ -32,6 +30,7 @@ class GetQuestionnaire{
         formListLength = qMetaData['AppointmentTypes'][0]['QuestionnaireIDArray'].length;
         forms = qMetaData['AppointmentTypes'][0]['QuestionnaireIDArray'];
         print(forms.length);
+        int index = 0;
         for(var form in forms){
           await getFormQuestions.findQuestions(form);
           formUpdateDate.add(getFormQuestions.date);

@@ -7,13 +7,13 @@ import 'package:flutter/material.dart';
 
 import '../main.dart';
 
-class QuestionsList extends StatefulWidget {
+class QuestionsListEdit extends StatefulWidget {
   final String title;
   final String? formPosition;
-  const QuestionsList({Key? key, required this.title , this.formPosition}) : super(key: key);
+  const QuestionsListEdit({Key? key, required this.title , this.formPosition}) : super(key: key);
 
   @override
-  _QuestionsListState createState() => _QuestionsListState();
+  _QuestionsListEditState createState() => _QuestionsListEditState();
 }
 
 List<QuestionModel> formQues = [];
@@ -24,7 +24,7 @@ Future getQuestions(String id) async {
 
 
 
-class _QuestionsListState extends State<QuestionsList> {
+class _QuestionsListEditState extends State<QuestionsListEdit> {
 
   refresh(){
     setState(() {

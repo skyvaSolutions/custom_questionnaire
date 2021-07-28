@@ -36,7 +36,7 @@ class GetFormQuestions{
         }
         else{
           print("form list : $myFormList[0]");
-          var formModel = myFormList[0];
+          var formModel = FormModel.fromJson(myFormList[0]);
           print(formModel);
           if(myFormList[0]['UpdatedTimeStamp'] != "") {
             date = myFormList[0]['UpdatedTimeStamp'];
@@ -48,11 +48,10 @@ class GetFormQuestions{
           else {
             qListLength = myFormList[0]['QuestionsArray'].length;
           }
-          print('hii');
           print(qListLength);
           noOfQuestions = qListLength;
-          if(formModel['QuestionnairePosition'] != "" && formModel['QuestionnairePosition'] != null ) {
-            position = formModel['QuestionnairePosition'];
+          if(formModel.QuestionnairePosition != "" && formModel.QuestionnairePosition != null ) {
+            position = formModel.QuestionnairePosition;
           }
           for(int i =0;i<qListLength ;i++){
             questionnaire.add(QuestionModel.fromJson(myFormList[0]['QuestionsArray'][i]));

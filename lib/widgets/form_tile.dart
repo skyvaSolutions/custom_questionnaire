@@ -1,6 +1,7 @@
 import 'package:custom_questionnaire/api_calls/delete_form.dart';
 import 'package:custom_questionnaire/api_calls/get_form_questions.dart';
-import 'package:custom_questionnaire/screens/form_questions.dart';
+import 'package:custom_questionnaire/screens/q_list_edit.dart';
+import 'package:custom_questionnaire/screens/view_particular_form.dart';
 import 'package:custom_questionnaire/utils/conversions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +26,7 @@ void edit(BuildContext context, String title , String? formPosition) {
   Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (BuildContext context) => QuestionsList(title: title , formPosition: formPosition,)));
+          builder: (BuildContext context) => QuestionsListEdit(title: title , formPosition: formPosition,)));
 }
 
 String properFormat(DateTime? date){
@@ -136,7 +137,12 @@ class _FormTileState extends State<FormTile> {
                 caption: 'View',
                 color: teal,
                 icon: Icons.remove_red_eye,
-                onTap: () => {},
+                onTap: ()  {
+                Navigator.push(
+                context,
+                MaterialPageRoute(
+                builder: (BuildContext context) => ViewForm(title: widget.name )));
+                },
               ),
             ],
             secondaryActions: <Widget>[

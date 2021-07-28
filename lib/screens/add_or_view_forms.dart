@@ -20,8 +20,6 @@ final TextEditingController _positionController = TextEditingController();
 
 Future getForms() async {
   await getQuestionnaire.findForms();
-  print(getQuestionnaire.forms);
-  print(getQuestionnaire.formUpdateDate);
 }
 
 class _AddOrViewFormsState extends State<AddOrViewForms> {
@@ -116,7 +114,9 @@ class _AddOrViewFormsState extends State<AddOrViewForms> {
                     }
                   ];
                   await addFormToQueue.addNewFormToQueue(newForm);
-                  setState(() {});
+                  setState(() {
+
+                  });
                   _nameController.text = "";
                   _positionController.text = "";
                   Navigator.of(context).pop();
@@ -150,10 +150,10 @@ class _AddOrViewFormsState extends State<AddOrViewForms> {
               ),
             );
           }
-          // else if (snapshot.hasError) {
-          //   print(snapshot.error);
-          //   return Container();
-          // }
+          else if (snapshot.hasError) {
+            print(snapshot.error);
+            return Container();
+          }
           else if (snapshot.connectionState == ConnectionState.done &&
               snapshot.hasData != null) {
             return Scaffold(
