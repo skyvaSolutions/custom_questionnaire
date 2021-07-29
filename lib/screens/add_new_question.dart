@@ -1,6 +1,7 @@
 import 'package:custom_questionnaire/api_calls/add_or_update_form.dart';
 import 'package:custom_questionnaire/api_calls/get_form_questions.dart';
 import 'package:custom_questionnaire/model/question.dart';
+import 'package:custom_questionnaire/utils/save_functions.dart';
 import 'package:custom_questionnaire/widgets/show_cancel_alertbox.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,9 @@ class AddQuestion extends StatefulWidget {
   final String? formPosition;
   final Function()? refresh;
   final List<QuestionModel> list;
-  const AddQuestion({Key? key , this.formName , this.refresh , this.formPosition , required this.list}) : super(key: key);
+  final bool updateOld;
+  final String? qId;
+  const AddQuestion({Key? key , this.formName , this.refresh , this.formPosition , required this.list , required this.updateOld , this.qId}) : super(key: key);
 
   @override
   _AddQuestionState createState() => _AddQuestionState();
@@ -26,8 +29,32 @@ bool showSave = false;
 
 var uuid = const Uuid();
 
+Map<String , String> validHint = {
+  'Multiple Choice' : 'Options for multiple Choice separated by new line' ,
+  'Radio' :  'Options for Radio separated by new line',
+  'Slider' : 'Min and max values separated by new line',
+  'Drop Down' :  'Options for Drop Down separated by new line' ,
+  'Chip' :  'Options for chip separated by new line',
+};
+
+List<String> questionTypes = [
+  'Yes/No', 'Multiple Choice', 'Radio', 'Text' , 'Slider' , 'Drop Down' , 'Chip' , 'Switch' , 'Segment' , 'Comment(Multiline)' , 'Email' , 'Name' ,'Phone' , 'Image' , 'Pdf file' , 'Signature' , 'Header' , 'Statement'
+];
+
+List<String> noValidAns = [
+  'Yes/No', 'Text' , 'Switch' , 'Segment' , 'Comment(Multiline)' , 'Email' , 'Name' , 'Phone' , 'Image' , 'Pdf file' , 'Header' , 'Statement'
+];
+
 TextEditingController questionText = TextEditingController();
 TextEditingController validAns = TextEditingController();
+
+reset(){
+  questionText.text = "";
+  validAns.text = "";
+  type = 'Yes/No';
+  required = false;
+  showSave = false;
+}
 
 class _AddQuestionState extends State<AddQuestion> {
   @override
@@ -40,7 +67,9 @@ class _AddQuestionState extends State<AddQuestion> {
               showDialog(
                   context: context,
                   builder: (BuildContext ctx) {
-                    return const ShowCancelAlertBox();
+                    return const ShowCancelAlertBox(
+                      reset: reset,
+                    );
                   });
             }
             else {
@@ -69,35 +98,15 @@ class _AddQuestionState extends State<AddQuestion> {
             IconButton(
               onPressed: () async {
                 if(questionText.text != "" ){
-                  Map<String, dynamic> formValues = {};
-                  formValues['QuestionnaireID'] = widget.formName;
-                  formValues['QuestionnairePosition'] = widget.formPosition;
-                  formValues['NumberOfQuestions'] = widget.list.length + 1;
-                  List<Map<String , dynamic>> listToBeSent = [];
-                  List<QuestionModel> _list = widget.list;
-
-                  for(var q in _list){
-                    listToBeSent.add(toMap(q));
+                  if(widget.updateOld){
+                    updateOldQuestion(widget);
                   }
-
-                  List<String> validAnsList = [];
-                  if(validAns.text != ""){
-                    validAnsList = validAns.text.split('\n');
+                  else{
+                    saveNewQuestion(widget);
                   }
-                  QuestionModel newQues = QuestionModel(validAnsList, uuid.v4(), questionText.text, _list.length, type, required, "QID" + _list.length.toString());
-                  Map<String , dynamic> newQuesMap = toMap(newQues);
-                  listToBeSent.add(newQuesMap);
-                  formValues['QuestionsArray'] = listToBeSent;
-                  print(formValues);
-                  await addUpdateForm.addUpdateForm(formValues);
-                  questionText.text = "";
-                  validAns.text = "";
-                  type = 'Yes/No';
-                  required = false;
-                  showSave = false;
-                  Navigator.pop(context);
-                  widget.refresh!();
                 }
+
+                Navigator.pop(context);
               },
               icon: const Icon(
                 Icons.check,
@@ -119,18 +128,18 @@ class _AddQuestionState extends State<AddQuestion> {
               decoration: InputDecoration(
                 hintText: 'Question Text',
                 filled: true,
-                fillColor: teal.withOpacity(0.1),
+                fillColor: Colors.grey.withOpacity(0.2),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30.0),
+                  borderRadius: BorderRadius.circular(10.0),
                   borderSide: BorderSide.none,
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.circular(30.0),
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
               ),
               style: const TextStyle(
-                fontSize: 17.0,
+                fontSize: 15.0,
               ),
               onChanged: (String val) {
                 setState(() {
@@ -145,8 +154,8 @@ class _AddQuestionState extends State<AddQuestion> {
               padding:
                   const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(30.0),
-                color: teal.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(10.0),
+                color: Colors.grey.withOpacity(0.2),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -154,7 +163,7 @@ class _AddQuestionState extends State<AddQuestion> {
                   const Text(
                     'Question Type',
                     style: TextStyle(
-                      fontSize: 17.0,
+                      fontSize: 15.0,
                     ),
                   ),
                   const SizedBox(
@@ -167,7 +176,7 @@ class _AddQuestionState extends State<AddQuestion> {
                       Icons.arrow_drop_down,
                       color: teal,
                     ),
-                    items: <String>['Yes/No', 'Multiple Choice', 'Radio', 'Text' , 'Slider' , 'Drop Down' , 'Chip' , 'Switch' , 'Segment' , 'Comment(Multiline)' , 'Email' , 'Name' ,'Phone' , 'Image' , 'Pdf file' , 'Signature' , 'Header' , 'Statement']
+                    items: questionTypes
                         .map((String value) {
                       return DropdownMenuItem<String>(
                         value: value,
@@ -188,26 +197,27 @@ class _AddQuestionState extends State<AddQuestion> {
             const SizedBox(
               height: 20.0,
             ),
+            if(!noValidAns.contains(type))
             TextField(
               cursorColor: teal,
               maxLines: 10,
               controller: validAns,
-              enabled: (type == "Header" || type == "Statement") ? false : true,
+              enabled: (noValidAns.contains(type)) ? false : true,
               decoration: InputDecoration(
                 filled: true,
-                fillColor: teal.withOpacity(0.1),
-                hintText: 'Valid Answers',
+                fillColor: Colors.grey.withOpacity(0.2),
+                hintText: validHint[type],
                 border: OutlineInputBorder(
                   borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.circular(30.0),
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.circular(30.0),
+                  borderRadius: BorderRadius.circular(10.0),
                 ),
               ),
               style: const TextStyle(
-                fontSize: 17.0,
+                fontSize: 15.0,
               ),
               onChanged: (String val) {
                 setState(() {

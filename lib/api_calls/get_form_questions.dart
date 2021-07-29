@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:custom_questionnaire/model/forms.dart';
 import 'package:custom_questionnaire/model/question.dart';
 import 'package:custom_questionnaire/utils/device_id.dart';
 import 'package:http/http.dart' as http;
@@ -35,9 +34,7 @@ class GetFormQuestions{
            position = "";
         }
         else{
-          print("form list : $myFormList[0]");
-          var formModel = FormModel.fromJson(myFormList[0]);
-          print(formModel);
+          print(myFormList[0].runtimeType);
           if(myFormList[0]['UpdatedTimeStamp'] != "") {
             date = myFormList[0]['UpdatedTimeStamp'];
           }
@@ -50,8 +47,8 @@ class GetFormQuestions{
           }
           print(qListLength);
           noOfQuestions = qListLength;
-          if(formModel.QuestionnairePosition != "" && formModel.QuestionnairePosition != null ) {
-            position = formModel.QuestionnairePosition;
+          if(myFormList[0]['QuestionnairePosition'] != "" && myFormList[0]['QuestionnairePosition'] != null ) {
+            position = myFormList[0]['QuestionnairePosition'];
           }
           for(int i =0;i<qListLength ;i++){
             questionnaire.add(QuestionModel.fromJson(myFormList[0]['QuestionsArray'][i]));

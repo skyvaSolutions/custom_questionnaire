@@ -2,11 +2,14 @@ import 'package:custom_questionnaire/api_calls/add_or_update_form.dart';
 import 'package:custom_questionnaire/api_calls/q_meta_data.dart';
 import 'package:custom_questionnaire/api_calls/q_meta_data_post.dart';
 import 'package:custom_questionnaire/main.dart';
+import 'package:custom_questionnaire/model/question.dart';
 import 'package:custom_questionnaire/widgets/form_list.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 var uuid = const Uuid();
+
+Map<String , List<QuestionModel>> formMap = {};
 
 class AddOrViewForms extends StatefulWidget {
   const AddOrViewForms({Key? key}) : super(key: key);
@@ -19,7 +22,7 @@ final TextEditingController _nameController = TextEditingController();
 final TextEditingController _positionController = TextEditingController();
 
 Future getForms() async {
-  await getQuestionnaire.findForms();
+  formMap = await getQuestionnaire.findForms();
 }
 
 class _AddOrViewFormsState extends State<AddOrViewForms> {
@@ -171,6 +174,7 @@ class _AddOrViewFormsState extends State<AddOrViewForms> {
                 padding: const EdgeInsets.only(top: 20.0),
                 child: FormList(
                   refreshParent: refreshParent,
+                  formMap: formMap,
                 ),
               ),
             );

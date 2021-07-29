@@ -18,6 +18,14 @@ class ReorderableQuestionList extends StatefulWidget {
       _ReorderableQuestionListState();
 }
 
+String validText(List<dynamic> list){
+  String validText = "";
+  for(var ans in list){
+    validText = ans + "\n";
+  }
+  return validText;
+}
+
 //List<QuestionModel> _list = getFormQuestions.questionnaire;
 
 class _ReorderableQuestionListState extends State<ReorderableQuestionList> {
@@ -59,7 +67,12 @@ class _ReorderableQuestionListState extends State<ReorderableQuestionList> {
                 ),
                 trailing: IconButton(
                   onPressed: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext) =>  AddQuestion(formName: widget.formName, refresh: widget.refresh, formPosition: widget.formPosition, list: widget.list,)));
+                    questionText.text = item.Question;
+                    if(questionTypes.contains(item.QuestionType)) {
+                      type = item.QuestionType;
+                    }
+                    validAns.text = validText(item.ValidAnswers);
+                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext) =>  AddQuestion(formName: widget.formName, refresh: widget.refresh, formPosition: widget.formPosition, list: widget.list, updateOld: true, qId: item.QuestionID,)));
                   },
                   icon: Icon(
                     Icons.edit,

@@ -59,7 +59,7 @@ class _QuestionsListEditState extends State<QuestionsListEdit> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (BuildContext) => AddQuestion(formName: widget.title, refresh : refresh , list: formQues,)));
+                  builder: (BuildContext) => AddQuestion(formName: widget.title, refresh : refresh , list: formQues, updateOld: false,)));
         },
         child: const Icon(
           Icons.add,

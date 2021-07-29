@@ -74,7 +74,7 @@ class _FormTileState extends State<FormTile> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 8.0),
+      margin: const EdgeInsets.only(bottom: 15.0),
       child: Column(
         children: [
           Slidable(
@@ -157,8 +157,10 @@ class _FormTileState extends State<FormTile> {
               ),
             ],
           ),
+          const SizedBox(
+            height: 5.0,
+          ),
           Container(
-            margin: const EdgeInsets.only(top: 5.0),
             decoration: BoxDecoration(
               border: Border(
                 bottom: BorderSide(color: teal, width: 1.0),

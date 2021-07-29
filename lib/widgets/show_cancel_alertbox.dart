@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import '../main.dart';
 
 class ShowCancelAlertBox extends StatefulWidget {
-  const ShowCancelAlertBox({Key? key}) : super(key: key);
+  final Function() reset ;
+  const ShowCancelAlertBox({Key? key , required this.reset}) : super(key: key);
 
   @override
   _ShowCancelAlertBoxState createState() => _ShowCancelAlertBoxState();
@@ -63,6 +64,7 @@ class _ShowCancelAlertBoxState extends State<ShowCancelAlertBox> {
         ),
         ElevatedButton(
           onPressed: ()  {
+            widget.reset();
             Navigator.pop(context);
             Navigator.pop(context);
           },

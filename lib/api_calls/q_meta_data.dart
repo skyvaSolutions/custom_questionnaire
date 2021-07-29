@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:custom_questionnaire/model/question.dart';
 import 'package:http/http.dart' as http;
 
 import 'get_form_questions.dart';
@@ -12,9 +13,10 @@ class GetQuestionnaire{
   List<String> formUpdateDate = [];
   List<int>  formNoQuestions = [];
   List<String> formPosition = [];
+  Map<String , List<QuestionModel>> formMap = {} ;
 
 
-  Future<void> findForms() async {
+  Future<Map<String , List<QuestionModel>>> findForms() async {
     formUpdateDate =[];
     formNoQuestions = [];
     formPosition = [];
@@ -30,9 +32,8 @@ class GetQuestionnaire{
         formListLength = qMetaData['AppointmentTypes'][0]['QuestionnaireIDArray'].length;
         forms = qMetaData['AppointmentTypes'][0]['QuestionnaireIDArray'];
         print(forms.length);
-        int index = 0;
         for(var form in forms){
-          await getFormQuestions.findQuestions(form);
+          formMap[form] = await getFormQuestions.findQuestions(form);
           formUpdateDate.add(getFormQuestions.date);
           formNoQuestions.add(getFormQuestions.noOfQuestions);
           formPosition.add(getFormQuestions.position);
@@ -46,6 +47,7 @@ class GetQuestionnaire{
         print('getQMetaData : Error');
       }
 
+      return formMap;
 
   }
 

@@ -2,6 +2,30 @@ import 'package:custom_questionnaire/screens/add_or_view_forms.dart';
 import 'package:custom_questionnaire/utils/device_id.dart';
 import 'package:flutter/material.dart';
 
+
+Color hexToColor(int rgb) => new Color(0xFF000000 + rgb);
+
+class CustomTheme extends Theme {
+
+  static Color blueDark = hexToColor(0x335C81);
+  static Color blueLight = hexToColor(0x74B3CE);
+  static Color yellow = hexToColor(0xFCA311);
+  static Color red = hexToColor(0xE15554);
+  static Color green = hexToColor(0x3BB273);
+
+  CustomTheme(Widget child)
+      : super(
+    child: child,
+    data:  ThemeData(
+      primaryColor: teal,
+      cardColor: teal,
+      backgroundColor: teal,
+      highlightColor: teal,
+      splashColor: teal,
+    ),
+  );
+}
+
 void main() {
   runApp(const MyApp());
 }
@@ -21,6 +45,10 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: teal,
+        cardColor: teal,
+        backgroundColor: teal,
+        highlightColor: teal,
+        splashColor: teal.withAlpha(50),
       ),
       home: const MyHomePage(title: 'Custom Questionnaire'),
     );
